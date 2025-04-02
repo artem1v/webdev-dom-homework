@@ -70,7 +70,6 @@
 
 "use strict";
 
-
 let comments = [
   {
     name: "Глеб Фокин",
@@ -88,12 +87,19 @@ let comments = [
   },
 ];
 
-
 const nameInput = document.querySelector(".add-form-name");
 const textInput = document.querySelector(".add-form-text");
 const addButton = document.querySelector(".add-form-button");
 const commentsList = document.querySelector(".comments");
 
+function escapeHtml(unsafe) {
+  return unsafe
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
 
 function getCurrentDateTime() {
   const now = new Date();
@@ -104,7 +110,6 @@ function getCurrentDateTime() {
   const minutes = String(now.getMinutes()).padStart(2, "0");
   return `${day}.${month}.${year} ${hours}:${minutes}`;
 }
-
 
 function createCommentHTML(comment) {
   return `
@@ -128,22 +133,40 @@ function createCommentHTML(comment) {
   `;
 }
 
-
-function renderComments() {
-  commentsList.innerHTML = comments.map(createCommentHTML).join("");
-  addLikeListeners();
+function quoteComment(index) {
+  const comment = comments[index];
+  const quotedText = `> ${comment.text}\n\n@${comment.name}, `;
+  textInput.value = quotedText;
+  nameInput.value = '';
+  textInput.focus();
 }
 
-
-function addLikeListeners() {
-  const likeButtons = document.querySelectorAll(".like-button");
-  likeButtons.forEach((button, index) => {
-    button.addEventListener("click", () => {
-      toggleLike(index);
+function addCommentClickListeners() {
+  const commentElements = document.querySelectorAll('.comment');
+  commentElements.forEach((commentElement, index) => {
+    commentElement.addEventListener('click', (event) => {
+      if (!event.target.closest('.like-button')) {
+        quoteComment(index);
+      }
     });
   });
 }
 
+function renderComments() {
+  commentsList.innerHTML = comments.map(createCommentHTML).join("");
+  addLikeListeners();
+  addCommentClickListeners();
+}
+
+function addLikeListeners() {
+  const likeButtons = document.querySelectorAll(".like-button");
+  likeButtons.forEach((button, index) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleLike(index);
+    });
+  });
+}
 
 function toggleLike(index) {
   const comment = comments[index];
@@ -152,34 +175,34 @@ function toggleLike(index) {
   renderComments();
 }
 
-
 function addComment() {
-  const name = nameInput.value.trim();
-  const text = textInput.value.trim();
+  let name = nameInput.value.trim();
+  let text = textInput.value.trim();
 
   
+  name = escapeHtml(name);
+  text = escapeHtml(text);
+
   let isError = false;
 
   if (name === "") {
-    nameInput.style.border = "2px solid red"; 
+    nameInput.style.border = "2px solid red";
     isError = true;
   } else {
     nameInput.style.border = "";
   }
 
   if (text === "") {
-    textInput.style.border = "2px solid red"; 
+    textInput.style.border = "2px solid red";
     isError = true;
   } else {
-    textInput.style.border = ""; 
+    textInput.style.border = "";
   }
 
-  
   if (isError) {
     return;
   }
 
-  
   const newComment = {
     name,
     date: getCurrentDateTime(),
@@ -191,18 +214,12 @@ function addComment() {
   comments.push(newComment);
   renderComments();
 
-  
   nameInput.value = "";
   textInput.value = "";
 }
 
-
 addButton.addEventListener("click", addComment);
-
-
 renderComments();
-
-
 
 
   </script>
