@@ -6,33 +6,27 @@ const addButton = document.querySelector('.add-form-button')
 const nameInput = document.querySelector('.add-form-name')
 const textInput = document.querySelector('.add-form-text')
 
-let quotedCommentIndex = null;
+let quotedCommentIndex = null
 function quoteComment(index) {
-    const comment = comments[index];
-    const quotePrefix = "> ";
-    const quotedText = `${quotePrefix}${comment.text}\n\n@${comment.name}, `;
-    textInput.value = quotedText;
-    quotedCommentIndex = index;
+    const comment = comments[index]
+    const quotePrefix = '> '
+    const quotedText = `${quotePrefix}${comment.text}\n\n@${comment.name}, `
+    textInput.value = quotedText
+    quotedCommentIndex = index
 }
-
 
 export function addCommentClickListeners() {
-    const commentElements = document.querySelectorAll('.comment');
-    
+    const commentElements = document.querySelectorAll('.comment')
+
     commentElements.forEach((commentElement, index) => {
         commentElement.addEventListener('click', (event) => {
-            
             if (!event.target.closest('.like-button')) {
-                quoteComment(index);
-                textInput.focus();
+                quoteComment(index)
+                textInput.focus()
             }
-        });
-    });
+        })
+    })
 }
-
-
-
-
 
 export function setupHandlers() {
     addButton.addEventListener('click', addComment)
@@ -40,17 +34,15 @@ export function setupHandlers() {
 }
 
 function addComment() {
-    const name = escapeHtml(nameInput.value.trim());
-    let text = escapeHtml(textInput.value.trim());
-
-
+    const name = escapeHtml(nameInput.value.trim())
+    let text = escapeHtml(textInput.value.trim())
 
     if (quotedCommentIndex !== null) {
-        const originalAuthor = comments[quotedCommentIndex].name;
-        text += `\n\n(Ответ на комментарий @${originalAuthor})`;
-        quotedCommentIndex = null;
+        const originalAuthor = comments[quotedCommentIndex].name
+        text += `\n\n(Ответ на комментарий @${originalAuthor})`
+        quotedCommentIndex = null
     }
-    
+
     let isError = false
 
     if (name === '') {
@@ -77,7 +69,7 @@ function addComment() {
             date: getCurrentDateTime(),
             text,
             likes: 0,
-            isLiked: false
+            isLiked: false,
         })
         renderComments()
         nameInput.value = ''
@@ -86,17 +78,17 @@ function addComment() {
 }
 
 export function addLikeListeners() {
-    const likeButtons = document.querySelectorAll('.like-button');
+    const likeButtons = document.querySelectorAll('.like-button')
     likeButtons.forEach((button, index) => {
-        button.replaceWith(button.cloneNode(true));
-    });
+        button.replaceWith(button.cloneNode(true))
+    })
 
     document.querySelectorAll('.like-button').forEach((button, index) => {
         button.addEventListener('click', (event) => {
-            event.stopPropagation();
-            toggleLike(index);
-        });
-    });
+            event.stopPropagation()
+            toggleLike(index)
+        })
+    })
 }
 
 export function toggleLike(index) {
