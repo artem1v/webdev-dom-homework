@@ -6,94 +6,62 @@ const addButton = document.querySelector('.add-form-button')
 const nameInput = document.querySelector('.add-form-name')
 const textInput = document.querySelector('.add-form-text')
 
-let quotedCommentIndex = null
-function quoteComment(index) {
-    const comment = comments[index]
-    const quotePrefix = '> '
-    const quotedText = `${quotePrefix}${comment.text}\n\n@${comment.name}, `
-    textInput.value = quotedText
-    quotedCommentIndex = index
+export function initAddCommentHandler() {
+    addButton.addEventListener('click', () => {
+        const name = escapeHtml(nameInput.value.trim())
+        const text = escapeHtml(textInput.value.trim())
+
+        if (!validateForm(name, text)) return
+
+        comments.push({
+            name,
+            text,
+            date: getCurrentDateTime(),
+            likes: 0,
+            isLiked: false,
+        })
+
+        renderComments()
+        clearForm()
+    })
 }
 
-export function addCommentClickListeners() {
-    const commentElements = document.querySelectorAll('.comment')
+export function initLikeHandlers() {
+    document.querySelectorAll('.like-button').forEach((button, index) => {
+        button.addEventListener('click', (event) => {
+            event.stopPropagation()
+            comments[index].isLiked = !comments[index].isLiked
+            comments[index].likes += comments[index].isLiked ? 1 : -1
+            renderComments()
+        })
+    })
+}
 
-    commentElements.forEach((commentElement, index) => {
+export function initQuoteHandler() {
+    document.querySelectorAll('.comment').forEach((commentElement, index) => {
         commentElement.addEventListener('click', (event) => {
             if (!event.target.closest('.like-button')) {
-                quoteComment(index)
+                const quotedComment = comments[index]
+                textInput.value = `> ${quotedComment.text}\n\n@${quotedComment.name}, `
                 textInput.focus()
             }
         })
     })
 }
 
-export function setupHandlers() {
-    addButton.addEventListener('click', addComment)
-    //addLikeListeners()
+function validateForm(name, text) {
+    let isValid = true
+
+    nameInput.style.border = name ? '' : '2px solid red'
+    textInput.style.border = text ? '' : '2px solid red'
+
+    if (!name || !text) isValid = false
+    return isValid
 }
 
-function addComment() {
-    const name = escapeHtml(nameInput.value.trim())
-    let text = escapeHtml(textInput.value.trim())
-
-    if (quotedCommentIndex !== null) {
-        const originalAuthor = comments[quotedCommentIndex].name
-        text += `\n\n(Ответ на комментарий @${originalAuthor})`
-        quotedCommentIndex = null
-    }
-
-    let isError = false
-
-    if (name === '') {
-        nameInput.style.border = '2px solid red'
-        isError = true
-    } else {
-        nameInput.style.border = ''
-    }
-
-    if (text === '') {
-        textInput.style.border = '2px solid red'
-        isError = true
-    } else {
-        textInput.style.border = ''
-    }
-
-    if (isError) {
-        return
-    }
-
-    if (!isError) {
-        comments.push({
-            name,
-            date: getCurrentDateTime(),
-            text,
-            likes: 0,
-            isLiked: false,
-        })
-        renderComments()
-        nameInput.value = ''
-        textInput.value = ''
-    }
-}
-
-export function addLikeListeners() {
-    const likeButtons = document.querySelectorAll('.like-button')
-    likeButtons.forEach((button, index) => {
-        button.replaceWith(button.cloneNode(true))
-    })
-
-    document.querySelectorAll('.like-button').forEach((button, index) => {
-        button.addEventListener('click', (event) => {
-            event.stopPropagation()
-            toggleLike(index)
-        })
-    })
-}
-
-export function toggleLike(index) {
-    const comment = comments[index]
-    comment.isLiked = !comment.isLiked
-    comment.likes += comment.isLiked ? 1 : -1
-    renderComments()
+function clearForm() {
+    nameInput.value = ''
+    textInput.value = ''
+    nameInput.style.border = ''
+    textInput.style.border = ''
 }
