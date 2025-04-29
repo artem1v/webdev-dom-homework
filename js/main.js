@@ -1,13 +1,13 @@
 import { renderComments } from './render.js'
 import {
-    initAddCommentHandler,
-    initLikeHandlers,
-    initQuoteHandler,
+    initAddCommentListener,
+    initLikeListener,
+    initQuoteListener,
 } from './handlers.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     renderComments()
-    initAddCommentHandler()
-    initLikeHandlers()
-    initQuoteHandler()
+    initAddCommentListener()
+    initLikeListener()
+    initQuoteListener()
 })

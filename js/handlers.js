@@ -6,7 +6,7 @@ const addButton = document.querySelector('.add-form-button')
 const nameInput = document.querySelector('.add-form-name')
 const textInput = document.querySelector('.add-form-text')
 
-export function initAddCommentHandler() {
+export function initAddCommentListener() {
     addButton.addEventListener('click', () => {
         const name = escapeHtml(nameInput.value.trim())
         const text = escapeHtml(textInput.value.trim())
@@ -26,7 +26,7 @@ export function initAddCommentHandler() {
     })
 }
 
-export function initLikeHandlers() {
+export function initLikeListener() {
     document.querySelectorAll('.like-button').forEach((button, index) => {
         button.addEventListener('click', (event) => {
             event.stopPropagation()
@@ -37,7 +37,7 @@ export function initLikeHandlers() {
     })
 }
 
-export function initQuoteHandler() {
+export function initQuoteListener() {
     document.querySelectorAll('.comment').forEach((commentElement, index) => {
         commentElement.addEventListener('click', (event) => {
             if (!event.target.closest('.like-button')) {
