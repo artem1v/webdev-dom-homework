@@ -14,10 +14,16 @@ export function initAddCommentHandler() {
 
         if (!validateForm(name, text)) return
 
+        document.querySelector('.form-loading').style.display = 'blok'
+        document.querySelector('.add-form').style.display = 'none'
+
         postComment(
             escapeHtml(textInput.value),
             escapeHtml(nameInput.value),
         ).then((data) => {
+            document.querySelector('.form-loading').style.display = 'none'
+            document.querySelector('.add-form').style.display = 'flex'
+
             updateComments(data)
             renderComments()
             nameInput.value = ''
@@ -25,8 +31,6 @@ export function initAddCommentHandler() {
             nameInput.style.border = ''
             textInput.style.border = ''
         })
-        //renderComments()
-        //clearForm()
     })
 }
 

@@ -7,6 +7,10 @@ import {
 import { fetchComments } from './api.js'
 import { updateComments } from './data.js'
 
+document.querySelector(".comments").innerHTML = 
+"Прожалуйста подождите, загружаю комментарий..."
+
+
 document.addEventListener('DOMContentLoaded', () => {
     fetchComments().then(data =>{
         updateComments(data)
