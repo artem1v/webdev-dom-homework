@@ -1,4 +1,5 @@
-import { comments } from './data.js'
+import { postComment } from './api.js'
+import { comments, updateComments } from './data.js'
 import { renderComments } from './render.js'
 import { escapeHtml, getCurrentDateTime } from './utils.js'
 
@@ -13,16 +14,19 @@ export function initAddCommentHandler() {
 
         if (!validateForm(name, text)) return
 
-        comments.push({
-            name,
-            text,
-            date: getCurrentDateTime(),
-            likes: 0,
-            isLiked: false,
+        postComment(
+            escapeHtml(textInput.value),
+            escapeHtml(nameInput.value),
+        ).then((data) => {
+            updateComments(data)
+            renderComments()
+            nameInput.value = ''
+            textInput.value = ''
+            nameInput.style.border = ''
+            textInput.style.border = ''
         })
-
-        renderComments()
-        clearForm()
+        //renderComments()
+        //clearForm()
     })
 }
 
@@ -57,11 +61,4 @@ function validateForm(name, text) {
 
     if (!name || !text) isValid = false
     return isValid
-}
-
-function clearForm() {
-    nameInput.value = ''
-    textInput.value = ''
-    nameInput.style.border = ''
-    textInput.style.border = ''
 }

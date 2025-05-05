@@ -4,10 +4,17 @@ import {
     initLikeHandlers,
     initQuoteHandler,
 } from './handlers.js'
+import { fetchComments } from './api.js'
+import { updateComments } from './data.js'
 
 document.addEventListener('DOMContentLoaded', () => {
-    renderComments()
+    fetchComments().then(data =>{
+        updateComments(data)
+        renderComments()
+    })
     initAddCommentHandler()
     initLikeHandlers()
     initQuoteHandler()
+    
 })
+
