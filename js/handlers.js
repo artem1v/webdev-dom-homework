@@ -1,7 +1,7 @@
 import { postComment } from './api.js'
 import { comments, updateComments } from './data.js'
 import { renderComments } from './render.js'
-import { escapeHtml, getCurrentDateTime } from './utils.js'
+import { escapeHtml } from './utils.js'
 
 const addButton = document.querySelector('.add-form-button')
 const nameInput = document.querySelector('.add-form-name')
@@ -17,20 +17,42 @@ export function initAddCommentHandler() {
         document.querySelector('.form-loading').style.display = 'blok'
         document.querySelector('.add-form').style.display = 'none'
 
-        postComment(
-            escapeHtml(textInput.value),
-            escapeHtml(nameInput.value),
-        ).then((data) => {
-            document.querySelector('.form-loading').style.display = 'none'
-            document.querySelector('.add-form').style.display = 'flex'
+        postComment(escapeHtml(textInput.value), escapeHtml(nameInput.value))
+            .then((data) => {
+                document.querySelector('.form-loading').style.display = 'none'
+                document.querySelector('.add-form').style.display = 'flex'
 
-            updateComments(data)
-            renderComments()
-            nameInput.value = ''
-            textInput.value = ''
-            nameInput.style.border = ''
-            textInput.style.border = ''
-        })
+                updateComments(data)
+                renderComments()
+                nameInput.value = ''
+                textInput.value = ''
+                nameInput.style.border = ''
+                textInput.style.border = ''
+            })
+            .catch((error) => {
+                document.querySelector('.form-loading').style.display = 'none'
+                document.querySelector('.add-form').style.display = 'flex'
+
+                if (error.message === 'Failed to fetch') {
+                    alert('Нет интернета, попробуйте снова')
+                }
+
+                if (error.message == 'Ошибка сервера') {
+                    alert('Ошибка сервера')
+                }
+
+                if (error.message === 'Неверный запрос') {
+                    alert('Имя и комментарий должны быть не короче 3х символов')
+
+                    nameInput.classList.add('-error')
+                    textInput.classList.add('-error')
+
+                    setTimeout(() => {
+                        nameInput.classList.remove('-error')
+                        textInput.classList.remove('-error')
+                    }, 2000)
+                }
+            })
     })
 }
 
