@@ -1,24 +1,20 @@
 const host = 'https://wedev-api.sky.pro/api/v1/Wenger-Artem'
 
+import { formatDate } from './utils.js';
+
 export const fetchComments = () => {
     return fetch(host + '/comments')
-        .then((res) => {
-            return res.json()
-        })
+        .then((res) => res.json())
         .then((responseData) => {
-            const appComments = responseData.comments.map((Comment) => {
-                return {
-                    name: Comment.author.name,
-                    date: new Date(Comment.date),
-                    text: Comment.text,
-                    likes: Comment.likes,
-                    isLiked: false,
-                }
-            })
-
-            return appComments
-        })
-}
+            return responseData.comments.map((comment) => ({
+                name: comment.author.name,
+                date: formatDate(new Date(comment.date)), 
+                text: comment.text,
+                likes: comment.likes,
+                isLiked: false
+            }));
+        });
+};
 
 export const postComment = (text, name) => {
     return fetch(host + '/comments', {

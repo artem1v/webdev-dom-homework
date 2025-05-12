@@ -1,8 +1,6 @@
 import { renderComments } from './render.js'
 import {
     initAddCommentHandler,
-    initLikeHandlers,
-    initQuoteHandler,
 } from './handlers.js'
 import { fetchComments } from './api.js'
 import { updateComments } from './data.js'
@@ -17,8 +15,5 @@ document.addEventListener('DOMContentLoaded', () => {
         renderComments()
     })
     initAddCommentHandler()
-    initLikeHandlers()
-    initQuoteHandler()
-    
-})
+   })
 
