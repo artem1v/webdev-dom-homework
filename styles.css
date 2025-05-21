@@ -2,6 +2,10 @@ body {
     margin: 0;
   }
 
+*{
+  box-sizing: border-box;
+}
+
   .container {
     font-family: Helvetica;
     color: #ffffff;
@@ -138,4 +142,71 @@ body {
 
   .-error {
     border: 1px solid red;
+  }
+
+  .link-login{
+    text-decoration: underline;
+  }
+
+  .add-form{
+    padding: 20px;
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .add-form-name,
+  .add-form-text {
+    font-size: 16px;
+    font-family: Helvetica;
+    border-radius: 0px;
+    border: none;
+  }
+
+  .add-form-name {
+    width: 540px;
+    padding: 11px 22px;
+    margin-bottom: 12px;
+  }
+
+  .add-form-name:read-only {
+    background-color: #d2ddd2;
+    color: #363636;
+    font-weight: bold;
+  }
+
+  .add-form-registre {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    border: none;
+    padding-left: 0;
+  }
+
+  .add-form-button-main {
+    width: 100%;
+    margin-top: 24px;
+    font-size: 24px;
+    padding: 10px 20px;
+    background-color: #bcec30;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+  }
+
+  .add-form-button-link {
+    text-align: center;
+    padding-top: 22px;
+    color: white;
+    cursor: pointer;
+    border-bottom: inherit;
+  }
+
+  .add-form-button-exit {
+    width: 50px;
+    margin-left: auto;
+    font-size: 12px;
+    background-color: #acb78b;
+    border-radius: 18px;
+    cursor: pointer;
   }

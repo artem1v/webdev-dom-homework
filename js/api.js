@@ -1,6 +1,25 @@
-const host = 'https://wedev-api.sky.pro/api/v1/Wenger-Artem'
+const host = 'https://wedev-api.sky.pro/api/v2/Wenger-Artem'
+const authHost = 'https://wedev-api.sky.pro/api/user'
 
-import { formatDate } from './utils.js';
+let _token = localStorage.getItem('token') || ''
+let _name = localStorage.getItem('name') || ''
+
+export const getName = () => _name
+
+export const setName = (newName) => {
+    _name = newName
+    localStorage.setItem('name', newName)
+}
+
+export let token = _token
+
+export const setToken = (newToken) => {
+    _token = newToken
+    localStorage.setItem('token', newToken)
+}
+
+import { renderComments } from './render.js'
+import { formatDate } from './utils.js'
 
 export const fetchComments = () => {
     return fetch(host + '/comments')
@@ -8,17 +27,20 @@ export const fetchComments = () => {
         .then((responseData) => {
             return responseData.comments.map((comment) => ({
                 name: comment.author.name,
-                date: formatDate(new Date(comment.date)), 
+                date: formatDate(new Date(comment.date)),
                 text: comment.text,
                 likes: comment.likes,
-                isLiked: false
-            }));
-        });
-};
+                isLiked: false,
+            }))
+        })
+}
 
 export const postComment = (text, name) => {
     return fetch(host + '/comments', {
         method: 'POST',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
             text,
             name,
@@ -38,4 +60,44 @@ export const postComment = (text, name) => {
         .then(() => {
             return fetchComments()
         })
+}
+
+export const login = (login, password) => {
+    return fetch(authHost + '/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ login, password }),
+    })
+}
+
+export const registration = (name, login, password) => {
+    return fetch(authHost, {
+        method: 'POST',
+        body: JSON.stringify({
+            name,
+            login,
+            password,
+        }),
+    }).then((response) => {
+        if (!response.ok) {
+            return response.json().then((err) => {
+                throw new Error(err.error || 'Ошибка регистрации')
+            })
+        }
+        return response.json()
+    })
+}
+
+export const logout = () => {
+    try {
+        localStorage.removeItem('token')
+        localStorage.removeItem('name')
+        token = ''
+        name = ''
+        renderComments()
+    } catch (error) {
+        console.error('Ошибка выхода:', error)
+    }
 }

@@ -1,19 +1,24 @@
+import { token, fetchComments } from './api.js'
 import { renderComments } from './render.js'
-import {
-    initAddCommentHandler,
-} from './handlers.js'
-import { fetchComments } from './api.js'
 import { updateComments } from './data.js'
 
-document.querySelector(".comments").innerHTML = 
-"Прожалуйста подождите, загружаю комментарий..."
-
-
 document.addEventListener('DOMContentLoaded', () => {
-    fetchComments().then(data =>{
-        updateComments(data)
+    if (token) {
+        fetchCommentsAndRender()
+    } else {
         renderComments()
-    })
-    initAddCommentHandler()
-   })
+    }
+})
 
+function fetchCommentsAndRender() {
+    document.querySelector('.comments').innerHTML = 'Загрузка...'
+
+    fetchComments()
+        .then((data) => {
+            updateComments(data)
+            renderComments()
+        })
+        .catch(() => {
+            document.querySelector('.comments').innerHTML = 'Ошибка загрузки'
+        })
+}
