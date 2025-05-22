@@ -75,11 +75,7 @@ export const login = (login, password) => {
 export const registration = (name, login, password) => {
     return fetch(authHost, {
         method: 'POST',
-        body: JSON.stringify({
-            name,
-            login,
-            password,
-        }),
+        body: JSON.stringify({ name, login, password }),
     }).then((response) => {
         if (!response.ok) {
             return response.json().then((err) => {

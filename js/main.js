@@ -3,15 +3,22 @@ import { renderComments } from './render.js'
 import { updateComments } from './data.js'
 
 document.addEventListener('DOMContentLoaded', () => {
+    renderComments()
+
+    const commentsContainer = document.querySelector('.comments')
+
+    if (!commentsContainer) {
+        console.error('Элемент .comments не найден после рендера')
+        return
+    }
+
     if (token) {
-        fetchCommentsAndRender()
-    } else {
-        renderComments()
+        fetchCommentsAndRender(commentsContainer)
     }
 })
 
-function fetchCommentsAndRender() {
-    document.querySelector('.comments').innerHTML = 'Загрузка...'
+function fetchCommentsAndRender(container) {
+    container.innerHTML = 'Загрузка...'
 
     fetchComments()
         .then((data) => {
@@ -19,6 +26,6 @@ function fetchCommentsAndRender() {
             renderComments()
         })
         .catch(() => {
-            document.querySelector('.comments').innerHTML = 'Ошибка загрузки'
+            container.innerHTML = 'Ошибка загрузки'
         })
 }
