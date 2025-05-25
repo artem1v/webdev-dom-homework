@@ -1,83 +1,54 @@
-import { registration, setName, setToken } from './api.js'
-import { initAddCommentHandler } from './handlers.js'
+import { registration, setToken, setName } from './api.js'
+import { renderComments } from './render.js'
 import { renderLogin } from './renderLogin.js'
 
 export const renderRegistration = () => {
     const container = document.querySelector('.container')
-
-    if (!container) {
-        console.error('Контейнер не найден!')
-        return
-    }
-    const loginHtml = `
-        <section class="add-form">
-                <h1>Форма регистрации</h1>
-                    <input 
-                    type="name"
-                    class="add-form-name"
-                    placeholder="Введите имя"
-                    id="name"
-                    required
-                />
-                <input 
-                    type="text"
-                    class="add-form-name"
-                    placeholder="Введите логин"
-                    id="login"
-                    required
-                />
-                <input 
-                    type="password"
-                    class="add-form-name"
-                    placeholder="Введите пароль"
-                    id="password"
-                    required
-                ></input>
-                <fieldset class="add-form-registry">
-                    <button class="add-form-button-main button-main" type="submit">
-                        Зарегистрироваться</button>
-                        <u class="add-form-button-link entry">
-                             Войти
-                        </u>
-                </fieldset>
-            </section>
+    container.innerHTML = `
+        <div class="auth-form">
+            <h2>Регистрация</h2>
+            <input type="text" class="auth-input" id="name-input" placeholder="Имя">
+            <input type="text" class="auth-input" id="login-input" placeholder="Логин">
+            <input type="password" class="auth-input" id="password-input" placeholder="Пароль">
+            <button class="auth-button" id="register-button">Зарегистрироваться</button>
+            <div class="auth-link" id="to-login">Уже есть аккаунт? Войти</div>
+            <div class="auth-error" id="register-error"></div>
+        </div>
     `
 
-    container.innerHTML = loginHtml
+    // Обработчики событий
+    document.getElementById('to-login').addEventListener('click', renderLogin)
 
-    document.querySelector('.entry').addEventListener('click', () => {
-        renderLogin()
-    })
+    document
+        .getElementById('register-button')
+        .addEventListener('click', async () => {
+            const nameInput = document.getElementById('name-input')
+            const loginInput = document.getElementById('login-input')
+            const passwordInput = document.getElementById('password-input')
+            const errorElement = document.getElementById('register-error')
 
-    const nameEl = document.querySelector('#name')
-    const loginEl = document.querySelector('#login')
-    const passwordEl = document.querySelector('#password')
-    const submitButtonEl = document.querySelector('.button-main')
-
-    submitButtonEl.addEventListener('click', () => {
-        const name = nameEl.value.trim()
-        const login = loginEl.value.trim()
-        const password = passwordEl.value.trim()
-
-        if (!name || !login || !password) {
-            alert('Все поля обязательны для заполнения!')
-            return
-        }
-
-        registration(name, login, password)
-            .then((data) => {
-                console.log('Ответ сервера:', data)
-
-                if (!data.user || !data.user.token) {
-                    throw new Error('Некорректный ответ сервера')
+            try {
+                // Валидация
+                if (passwordInput.value.trim().length < 3) {
+                    throw new Error('Пароль должен быть не менее 3 символов')
                 }
 
-                setToken(data.user.token)
-                setName(data.user.name)
-                initAddCommentHandler()
-            })
-            .catch((error) => {
-                alert(error.message)
-            })
-    })
+                const data = await registration(
+                    nameInput.value.trim(),
+                    loginInput.value.trim(),
+                    passwordInput.value.trim(),
+                )
+
+                if (data.user && data.user.token) {
+                    setToken(data.user.token)
+                    setName(data.user.name)
+                    renderComments()
+                } else {
+                    throw new Error('Неверный ответ сервера')
+                }
+            } catch (error) {
+                errorElement.textContent = error.message || 'Ошибка регистрации'
+                console.error('Registration failed:', error)
+            }
+        })
 }

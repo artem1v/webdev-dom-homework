@@ -1,56 +1,62 @@
-import { fetchComments, postComment } from './api.js'
+import { postComment } from './api.js'
 import { comments, updateComments } from './data.js'
 import { renderComments } from './render.js'
 import { escapeHtml } from './utils.js'
-
-const nameInput = document.querySelector('.add-form-name')
-const textInput = document.querySelector('.add-form-text')
 
 export function initAddCommentHandler() {
     const addButton = document.querySelector('.add-form-button')
     const textInput = document.querySelector('.add-form-text')
 
-    addButton?.addEventListener('click', () => {
-        const text = escapeHtml(textInput.value.trim())
+    addButton?.addEventListener('click', async () => {
+        const text = escapeHtml(textInput?.value.trim() || '')
 
         if (!text) {
-            textInput.style.border = '2px solid red'
+            textInput?.classList.add('-error')
             return
         }
 
-        postComment(text)
-            .then(() => fetchComments())
-            .then((comments) => {
-                updateComments(comments)
-                renderComments()
-            })
-            .catch((error) => {
-                alert(error.message)
-            })
+        try {
+            addButton.disabled = true
+            const updatedComments = await postComment(text)
+            updateComments(updatedComments)
+            renderComments()
+            textInput.value = ''
+        } catch (error) {
+            alert(error.message)
+        } finally {
+            addButton.disabled = false
+        }
     })
 }
 
+// ... остальные функции без изменений
+
 export function initLikeHandlers() {
-    document.querySelectorAll('.like-button').forEach((button, index) => {
+    const likeButtons = document.querySelectorAll('.like-button')
+
+    likeButtons.forEach((button, index) => {
         button.addEventListener('click', (event) => {
             event.stopPropagation()
+
+            // Обновляем состояние
             comments[index].isLiked = !comments[index].isLiked
             comments[index].likes += comments[index].isLiked ? 1 : -1
+
+            // Перерисовываем комментарии
             renderComments()
+
+            // Можно добавить здесь вызов API для сохранения лайка,
+            // если требуется сохранение на сервере
         })
     })
 }
-
 
 export function initQuoteHandler() {
     document.querySelectorAll('.comment').forEach((commentElement, index) => {
         commentElement.addEventListener('click', (event) => {
             if (!event.target.closest('.like-button')) {
-                const textInput = document.querySelector('.add-form-text') 
-                if (!textInput) return 
-
                 const quotedComment = comments[index]
-                textInput.value = `> ${quotedComment.text}\n\n@${quartedComment.name}, `
+                textInput.value = `> ${quotedComment.text}\n\n@${quotedComment.name}, `
                 textInput.focus()
             }
         })

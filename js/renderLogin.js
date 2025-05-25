@@ -1,72 +1,46 @@
-import { login, setName, setToken } from './api.js'
+import { login, setToken, setName, fetchComments } from './api.js'
+import { updateComments } from './data.js'
 import { renderComments } from './render.js'
 import { renderRegistration } from './renderRegistration.js'
 
 export const renderLogin = () => {
     const container = document.querySelector('.container')
-
-    const loginHtml = `
-        <section class="add-form">
-            <h1>Форма входа</h1>
-            <input 
-                type="text"
-                class="add-form-name"
-                placeholder="Введите логин"
-                id="login"
-                required
-            />
-            <input 
-                type="password"
-                class="add-form-name"
-                placeholder="Введите пароль"
-                id="password"
-                required
-            />
-            <fieldset class="add-form-registry">
-                <button class="add-form-button-main button-main" type="submit">
-                    Войти
-                </button>
-                <u class="add-form-button-link registry">
-                    Зарегистрироваться 
-                </u>
-            </fieldset>
-        </section>
+    container.innerHTML = `
+        <div class="auth-form">
+            <h2>Вход</h2>
+            <input type="text" class="auth-input" id="login-input" placeholder="Логин">
+            <input type="password" class="auth-input" id="password-input" placeholder="Пароль">
+            <button class="auth-button" id="login-button">Войти</button>
+            <div class="auth-link" id="to-register">Нет аккаунта? Зарегистрироваться</div>
+            <div class="auth-error" id="login-error"></div>
+        </div>
     `
 
-    container.innerHTML = loginHtml
+    // Обработчики событий
+    document
+        .getElementById('to-register')
+        .addEventListener('click', renderRegistration)
 
-    document.querySelector('.registry').addEventListener('click', () => {
-        renderRegistration()
-    })
+    document
+        .getElementById('login-button')
+        .addEventListener('click', async () => {
+            const loginValue = document.getElementById('login-input').value
+            const passwordValue =
+                document.getElementById('password-input').value
 
-    const loginEl = document.querySelector('#login')
-    const passwordEl = document.querySelector('#password')
-    const submitButtonEl = document.querySelector('.button-main')
+            try {
+                // Правильный вызов функции login
+                const response = await login(loginValue, passwordValue)
 
+                setToken(response.user.token)
+                setName(response.user.name)
 
-    submitButtonEl.addEventListener('click', () => {
-        const login = loginEl.value.trim()
-        const password = passwordEl.value.trim()
-
-        if (!login || !password) {
-            alert('Заполните все поля')
-            return
-        }
-
-        login(login, password)
-            .then((response) => {
-                if (response.status === 400) throw new Error('Неверные данные')
-                return response.json()
-            })
-            .then((data) => {
-                if (!data.user?.token) throw new Error('Ошибка сервера')
-                setToken(data.user.token)
-                setName(data.user.name)
+                // Загружаем комментарии
+                const commentsData = await fetchComments()
+                updateComments(commentsData)
                 renderComments()
-            })
-            .catch((error) => {
+            } catch (error) {
                 alert(error.message)
-                passwordEl.value = ''
-            })
-    })
+            }
+        })
 }
