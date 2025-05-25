@@ -54,11 +54,8 @@ function getLoginPrompt() {
 }
 
 function setupEventListeners() {
-    // Кнопка выхода
     document.querySelector('.logout-button')?.addEventListener('click', () => {
         logout()
-        renderLogin() // Дополнительный вызов для надёжности
+        renderLogin() 
     })
-
-    // Остальные обработчики...
 }

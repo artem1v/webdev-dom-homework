@@ -16,7 +16,6 @@ export const renderLogin = () => {
         </div>
     `
 
-    // Обработчики событий
     document
         .getElementById('to-register')
         .addEventListener('click', renderRegistration)
@@ -29,13 +28,11 @@ export const renderLogin = () => {
                 document.getElementById('password-input').value
 
             try {
-                // Правильный вызов функции login
                 const response = await login(loginValue, passwordValue)
 
                 setToken(response.user.token)
                 setName(response.user.name)
 
-                // Загружаем комментарии
                 const commentsData = await fetchComments()
                 updateComments(commentsData)
                 renderComments()

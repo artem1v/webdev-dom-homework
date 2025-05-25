@@ -29,7 +29,7 @@ export function initAddCommentHandler() {
     })
 }
 
-// ... остальные функции без изменений
+
 
 export function initLikeHandlers() {
     const likeButtons = document.querySelectorAll('.like-button')
@@ -38,15 +38,14 @@ export function initLikeHandlers() {
         button.addEventListener('click', (event) => {
             event.stopPropagation()
 
-            // Обновляем состояние
+
             comments[index].isLiked = !comments[index].isLiked
             comments[index].likes += comments[index].isLiked ? 1 : -1
 
-            // Перерисовываем комментарии
+
             renderComments()
 
-            // Можно добавить здесь вызов API для сохранения лайка,
-            // если требуется сохранение на сервере
+
         })
     })
 }

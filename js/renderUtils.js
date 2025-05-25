@@ -64,7 +64,7 @@ export const renderCommentsUtils = (container) => {
         initLikeHandlers()
         initQuoteHandler()
     } else {
-        // Исправленный обработчик
+
         document
             .querySelector('.link-login')
             ?.addEventListener('click', (e) => {

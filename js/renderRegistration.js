@@ -16,7 +16,6 @@ export const renderRegistration = () => {
         </div>
     `
 
-    // Обработчики событий
     document.getElementById('to-login').addEventListener('click', renderLogin)
 
     document
@@ -28,7 +27,7 @@ export const renderRegistration = () => {
             const errorElement = document.getElementById('register-error')
 
             try {
-                // Валидация
+
                 if (passwordInput.value.trim().length < 3) {
                     throw new Error('Пароль должен быть не менее 3 символов')
                 }

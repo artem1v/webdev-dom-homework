@@ -5,11 +5,11 @@ const authHost = 'https://wedev-api.sky.pro/api/user'
 let _token = localStorage.getItem('token') || ''
 let _name = localStorage.getItem('name') || ''
 
-// Экспорты
+
 export const getToken = () => _token
 
 export const getName = () => _name
-export const token = getToken() // Экспорт как функция
+export const token = getToken()
 export const setToken = (newToken) => {
     _token = newToken
     localStorage.setItem('token', newToken)
@@ -30,8 +30,7 @@ const handleResponse = async (response) => {
     return response.json()
 }
 
-// Функция входа
-// В api.js убедитесь, что есть правильный экспорт
+
 export const login = (login, password) => {
     return fetch(`${authHost}/login`, {
         method: 'POST',
@@ -46,7 +45,7 @@ export const login = (login, password) => {
     })
 }
 
-// Функция регистрации
+
 export const registration = async (name, login, password) => {
     try {
         const response = await fetch(authHost, {
@@ -64,7 +63,7 @@ export const registration = async (name, login, password) => {
     }
 }
 
-// Выход из системы
+
 export const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('name')
@@ -72,7 +71,7 @@ export const logout = () => {
     _name = ''
 }
 
-// Добавьте это в конец api.js
+
 export const postComment = (text) => {
     return fetch(host + '/comments', {
         method: 'POST',
@@ -89,7 +88,7 @@ export const postComment = (text) => {
             if (response.status === 500) throw new Error('Ошибка сервера')
             return response.json()
         })
-        .then(() => fetchComments()) // Возвращаем обновленный список
+        .then(() => fetchComments()) 
 }
 
 export const fetchComments = () => {
@@ -102,7 +101,7 @@ export const fetchComments = () => {
         .then((responseData) => {
             return responseData.comments.map((comment) => ({
                 name: comment.author.name,
-                date: formatDate(new Date(comment.date)), // Теперь formatDate определена
+                date: formatDate(new Date(comment.date)), 
                 text: comment.text,
                 likes: comment.likes,
                 isLiked: false,

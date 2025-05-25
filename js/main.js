@@ -44,5 +44,5 @@ export function fetchCommentsAndRender() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    renderComments() // Это вызовет все нужные обработчики
+    renderComments()
 })
