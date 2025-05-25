@@ -43,21 +43,30 @@ export const renderLogin = () => {
     const passwordEl = document.querySelector('#password')
     const submitButtonEl = document.querySelector('.button-main')
 
+
     submitButtonEl.addEventListener('click', () => {
-        login(loginEl.value, passwordEl.value)
+        const login = loginEl.value.trim()
+        const password = passwordEl.value.trim()
+
+        if (!login || !password) {
+            alert('Заполните все поля')
+            return
+        }
+
+        login(login, password)
             .then((response) => {
-                if (response.status === 400) {
-                    throw new Error('Неверный логин или пароль')
-                }
+                if (response.status === 400) throw new Error('Неверные данные')
                 return response.json()
             })
             .then((data) => {
+                if (!data.user?.token) throw new Error('Ошибка сервера')
                 setToken(data.user.token)
                 setName(data.user.name)
                 renderComments()
             })
             .catch((error) => {
                 alert(error.message)
+                passwordEl.value = ''
             })
     })
 }

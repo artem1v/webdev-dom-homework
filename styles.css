@@ -210,3 +210,14 @@ body {
     border-radius: 18px;
     cursor: pointer;
   }
+
+  .login-link {
+    color: #bcec30;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.add-form-name:read-only {
+    background-color: #444;
+    color: #ccc;
+}

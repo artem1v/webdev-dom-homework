@@ -65,9 +65,6 @@ export const postComment = (text, name) => {
 export const login = (login, password) => {
     return fetch(authHost + '/login', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
         body: JSON.stringify({ login, password }),
     })
 }
@@ -97,3 +94,8 @@ export const logout = () => {
         console.error('Ошибка выхода:', error)
     }
 }
+
+
+export const checkAuth = () => {
+    return !!token;
+};
