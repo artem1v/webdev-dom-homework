@@ -5,7 +5,6 @@ const authHost = 'https://wedev-api.sky.pro/api/user'
 let _token = localStorage.getItem('token') || ''
 let _name = localStorage.getItem('name') || ''
 
-
 export const getToken = () => _token
 
 export const getName = () => _name
@@ -30,7 +29,6 @@ const handleResponse = async (response) => {
     return response.json()
 }
 
-
 export const login = (login, password) => {
     return fetch(`${authHost}/login`, {
         method: 'POST',
@@ -44,7 +42,6 @@ export const login = (login, password) => {
         return response.json()
     })
 }
-
 
 export const registration = async (name, login, password) => {
     try {
@@ -63,14 +60,12 @@ export const registration = async (name, login, password) => {
     }
 }
 
-
 export const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('name')
     _token = ''
     _name = ''
 }
-
 
 export const postComment = (text) => {
     return fetch(host + '/comments', {
@@ -88,20 +83,23 @@ export const postComment = (text) => {
             if (response.status === 500) throw new Error('Ошибка сервера')
             return response.json()
         })
-        .then(() => fetchComments()) 
+        .then(() => fetchComments())
 }
 
 export const fetchComments = () => {
     return fetch(host + '/comments', {
-        headers: {
-            Authorization: `Bearer ${getToken()}`,
-        },
+        headers: getToken()
+            ? {
+                  // Добавляем токен только если он есть
+                  Authorization: `Bearer ${getToken()}`,
+              }
+            : {},
     })
         .then((response) => response.json())
         .then((responseData) => {
             return responseData.comments.map((comment) => ({
                 name: comment.author.name,
-                date: formatDate(new Date(comment.date)), 
+                date: formatDate(new Date(comment.date)),
                 text: comment.text,
                 likes: comment.likes,
                 isLiked: false,

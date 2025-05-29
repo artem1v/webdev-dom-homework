@@ -1,4 +1,4 @@
-import { postComment } from './api.js'
+import { fetchComments, postComment } from './api.js'
 import { comments, updateComments } from './data.js'
 import { renderComments } from './render.js'
 import { escapeHtml } from './utils.js'
@@ -17,7 +17,8 @@ export function initAddCommentHandler() {
 
         try {
             addButton.disabled = true
-            const updatedComments = await postComment(text)
+            await postComment(text)
+            const updatedComments = await fetchComments() // Добавлено получение обновленных комментариев
             updateComments(updatedComments)
             renderComments()
             textInput.value = ''
@@ -29,8 +30,6 @@ export function initAddCommentHandler() {
     })
 }
 
-
-
 export function initLikeHandlers() {
     const likeButtons = document.querySelectorAll('.like-button')
 
@@ -38,14 +37,10 @@ export function initLikeHandlers() {
         button.addEventListener('click', (event) => {
             event.stopPropagation()
 
-
             comments[index].isLiked = !comments[index].isLiked
             comments[index].likes += comments[index].isLiked ? 1 : -1
 
-
             renderComments()
-
-
         })
     })
 }
@@ -60,14 +55,4 @@ export function initQuoteHandler() {
             }
         })
     })
-}
-
-function validateForm(name, text) {
-    let isValid = true
-
-    nameInput.style.border = name ? '' : '2px solid red'
-    textInput.style.border = text ? '' : '2px solid red'
-
-    if (!name || !text) isValid = false
-    return isValid
 }

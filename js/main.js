@@ -1,10 +1,10 @@
 import { getToken, fetchComments } from './api.js'
 import { renderComments } from './render.js'
 import { updateComments } from './data.js'
-import { initLikeHandlers, initQuoteHandler } from './handlers.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     renderComments()
+    fetchCommentsAndRender()
 
     const commentsContainer = document.querySelector('.comments')
 
